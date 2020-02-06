@@ -6,6 +6,31 @@
 (package-initialize)
 
 
+(setq package-list '(auto-complete
+		     yasnippet
+		     auto-complete
+		     auto-complete
+		     hlinum
+		     jedi
+		     auto-complete
+		     nyan-mode
+		     iedit autopair
+		     auto-complete-clang
+		     auto-complete-clang-async
+		     google-c-style
+		     ac-math))
+
+; list the repositories containing them
+
+; fetch the list of packages available
+(unless package-archive-contents
+  (package-refresh-contents))
+
+; install the missing packages
+(dolist (package package-list)
+  (unless (package-installed-p package)
+    (package-install package)))
+
 ; start auto-complete with emacs
 (require 'auto-complete)
 
@@ -260,10 +285,13 @@ the directories in the INCLUDE environment variable."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("a22f40b63f9bc0a69ebc8ba4fbc6b452a4e3f84b80590ba0a92b4ff599e53ad0" "2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" "0c9f63c9d90d0d135935392873cd016cc1767638de92841a5b277481f1ec1f4a" "a2cde79e4cc8dc9a03e7d9a42fabf8928720d420034b66aecc5b665bbf05d4e9" "1436d643b98844555d56c59c74004eb158dc85fc55d2e7205f8d9b8c860e177f" "6bc387a588201caf31151205e4e468f382ecc0b888bac98b2b525006f7cb3307" default)))
  '(flymake-google-cpplint-command "/usr/local/bin/cpplint")
  '(package-selected-packages
    (quote
-    (python-docstring flycheck-pycheckers jedi-core color-theme-x yaml-tomato flymake-elixir color-theme-solarized cuda-mode pylint elpy ac-math ecb solarized-theme latex-preview-pane yatemplate yaml-mode jedi iedit hlinum google-c-style git flymake-google-cpplint flymake-cursor flymake-cppcheck el-autoyas autopair auto-yasnippet auto-complete-nxml auto-complete-exuberant-ctags auto-complete-clang-async auto-complete-clang auto-complete-chunk auto-complete-c-headers auto-auto-indent ac-c-headers))))
+    (makefile-executor dockerfile-mode docker docker-compose-mode zenburn-theme monokai-theme gruvbox-theme cyberpunk-theme html-check-frag web-mode python-docstring flycheck-pycheckers jedi-core color-theme-x yaml-tomato flymake-elixir color-theme-solarized cuda-mode pylint elpy ac-math ecb solarized-theme latex-preview-pane yatemplate yaml-mode jedi iedit hlinum google-c-style git flymake-google-cpplint flymake-cursor flymake-cppcheck el-autoyas autopair auto-yasnippet auto-complete-nxml auto-complete-exuberant-ctags auto-complete-clang-async auto-complete-clang auto-complete-chunk auto-complete-c-headers auto-auto-indent ac-c-headers))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -395,50 +423,50 @@ the directories in the INCLUDE environment variable."
         (lambda ()
 	  (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
-;; emacs pylint
-;; Configure flymake for Python
-(when (load "flymake" t)
-  (defun flymake-pylint-init ()
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                       'flymake-create-temp-inplace))
-           (local-file (file-relative-name
-                        temp-file
-                        (file-name-directory buffer-file-name))))
-      (list "epylint" (list local-file))))
-  (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.py\\'" flymake-pylint-init)))
+;; ;; emacs pylint
+;; ;; Configure flymake for Python
+;; (when (load "flymake" t)
+;;   (defun flymake-pylint-init ()
+;;     (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                        'flymake-create-temp-inplace))
+;;            (local-file (file-relative-name
+;;                         temp-file
+;;                         (file-name-directory buffer-file-name))))
+;;       (list "epylint" (list local-file))))
+;;   (add-to-list 'flymake-allowed-file-name-masks
+;;                '("\\.py\\'" flymake-pylint-init)))
 
-;; Set as a minor mode for Python
-(add-hook 'python-mode-hook '(lambda () (flymake-mode)))
+;; ;; Set as a minor mode for Python
+;; (add-hook 'python-mode-hook '(lambda () (flymake-mode)))
 
-;; Configure to wait a bit longer after edits before starting
-(setq-default flymake-no-changes-timeout '3)
+;; ;; Configure to wait a bit longer after edits before starting
+;; (setq-default flymake-no-changes-timeout '3)
 
-;; Keymaps to navigate to the errors
-(add-hook 'python-mode-hook '(lambda () (define-key python-mode-map "\C-cn" 'flymake-goto-next-error)))
-(add-hook 'python-mode-hook '(lambda () (define-key python-mode-map "\C-cp" 'flymake-goto-prev-error)))
+;; ;; Keymaps to navigate to the errors
+;; (add-hook 'python-mode-hook '(lambda () (define-key python-mode-map "\C-cn" 'flymake-goto-next-error)))
+;; (add-hook 'python-mode-hook '(lambda () (define-key python-mode-map "\C-cp" 'flymake-goto-prev-error)))
 
-;; appear in the minibuffer
-(defun show-fly-err-at-point ()
-  "If the cursor is sitting on a flymake error, display the message in the minibuffer"
-  (require 'cl)
-  (interactive)
-  (let ((line-no (line-number-at-pos)))
-    (dolist (elem flymake-err-info)
-      (if (eq (car elem) line-no)
-      (let ((err (car (second elem))))
-        (message "%s" (flymake-ler-text err)))))))
+;; ;; appear in the minibuffer
+;; (defun show-fly-err-at-point ()
+;;   "If the cursor is sitting on a flymake error, display the message in the minibuffer"
+;;   (require 'cl)
+;;   (interactive)
+;;   (let ((line-no (line-number-at-pos)))
+;;     (dolist (elem flymake-err-info)
+;;       (if (eq (car elem) line-no)
+;;       (let ((err (car (second elem))))
+;;         (message "%s" (flymake-ler-text err)))))))
 
-(add-hook 'post-command-hook 'show-fly-err-at-point)
+;; (add-hook 'post-command-hook 'show-fly-err-at-point)
 
-(defadvice flymake-goto-next-error (after display-message activate compile)
-  "Display the error in the mini-buffer rather than having to mouse over it"
-  (show-fly-err-at-point))
+;; (defadvice flymake-goto-next-error (after display-message activate compile)
+;;   "Display the error in the mini-buffer rather than having to mouse over it"
+;;   (show-fly-err-at-point))
 
-(defadvice flymake-goto-prev-error (after display-message activate compile)
-  "Display the error in the mini-buffer rather than having to mouse over it"
-  (show-fly-err-at-point))
+;; (defadvice flymake-goto-prev-error (after display-message activate compile)
+;;   "Display the error in the mini-buffer rather than having to mouse over it"
+;;   (show-fly-err-at-point))
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
-;; (load-theme 'tsdh-dark t)
+;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
