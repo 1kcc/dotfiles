@@ -74,7 +74,7 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git git-open)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -106,3 +106,6 @@ export EDITOR='emacs -nw'
 source /usr/local/bin
 export WORKON_HOME=$HOME/venv
 alias emacs=/usr/local/Cellar/emacs/26.3/bin/emacs
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
