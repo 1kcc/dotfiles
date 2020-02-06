@@ -81,31 +81,12 @@ function x11_forward() {
 }
 
 function scp_logos() {
-    scp -o "ProxyCommand ssh ${SSH_USER}@logos -W %h:%p" $SSH_USER@logos_local:$1
+    scp -o "ProxyCommand ssh ${SSH_USER}@$1 -W %h:%p" $SSH_USER@$2:$3
 }
 
 function scp_logos_local() {
-    scp -r $SSH_USER@logos_local:$1 $2
+    scp -r $SSH_USER@$1:$2 $3
 }
-
-function logos_local() {
-    ssh logos_local
-}
-
-function logos_remote() {
-    ssh logos
-}
-
-# export CC=/usr/local/bin/gcc-9
-# export CXX=/usr/local/bin/g++-9
-# export CPP=/usr/local/bin/cpp-9
-# export LD=/usr/local/bin/gcc-9
-# alias c++=/usr/local/bin/c++-9
-# alias g++=/usr/local/bin/g++-9
-# alias gcc=/usr/local/bin/gcc-9
-# alias cpp=/usr/local/bin/cpp-9
-# alias ld=/usr/local/bin/gcc-9
-# alias cc=/usr/local/bin/gcc-9
 
 function jupyN() {
   jupyter notebook --no-browser --port=$1
